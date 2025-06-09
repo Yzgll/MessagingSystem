@@ -1,6 +1,7 @@
-package main
+package process
 
 import (
+	"MessageSystem/client/utils"
 	"MessageSystem/common/message"
 	"encoding/binary"
 	"encoding/json"
@@ -8,8 +9,11 @@ import (
 	"net"
 )
 
+type UserProcess struct {
+}
+
 // 登录函数
-func login(userId int, userPwd string) (err error) {
+func (this *UserProcess) Login(userId int, userPwd string) (err error) {
 	//1.连接到服务器
 	conn, errDial := net.Dial("tcp", "10.10.4.137:8080")
 	if errDial != nil {
@@ -58,7 +62,10 @@ func login(userId int, userPwd string) (err error) {
 		return
 	}
 	//处理服务器返回的消息
-	mes, err = readPkg(conn)
+	tf := &utils.Transfer{
+		Conn: conn,
+	}
+	mes, err = tf.ReadPkg()
 	if err != nil {
 		fmt.Println("读取服务器返回消息失败", err)
 		return
@@ -67,7 +74,13 @@ func login(userId int, userPwd string) (err error) {
 	var loginrsp message.LoginRsp
 	err = json.Unmarshal([]byte(mes.MetaData), &loginrsp)
 	if loginrsp.Code == 200 {
-		fmt.Println("登陆成功！")
+		go serverProcessMes(conn)
+		//登录成功，显示登录成功的菜单
+		for {
+			ShowMenu()
+		}
+		//启动协程保持和服务器的通讯，如果有服务器推送的消息则显示在客户端的终端
+
 	} else {
 		fmt.Println(loginrsp.Error)
 	}

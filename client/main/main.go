@@ -1,6 +1,7 @@
 package main
 
 import (
+	"MessageSystem/client/process"
 	"fmt"
 )
 
@@ -11,8 +12,8 @@ var userPwd string
 func main() {
 
 	var key int
-	var loop = true
-	for loop {
+
+	for true {
 		fmt.Println("************************************************************")
 		fmt.Println("*                  欢迎登录多人聊天系统                    *")
 		fmt.Println("************************************************************")
@@ -27,10 +28,18 @@ func main() {
 		switch key {
 		case 1:
 			fmt.Println("\t\t\t登录系统")
-			loop = false
+			fmt.Println("请输入用户ID")
+			fmt.Scanf("%d\n", &userId)
+			fmt.Println("请输入用户密码")
+			fmt.Scanf("%s\n", &userPwd)
+			//loop = false
+			//完成登录
+			up := &process.UserProcess{}
+			up.Login(userId, userPwd)
+
 		case 2:
 			fmt.Println("\t\t\t注册用户")
-			loop = false
+
 		case 3:
 			fmt.Println("\t\t\t退出系统")
 		default:
@@ -38,18 +47,18 @@ func main() {
 		}
 	}
 	//处理用户操作
-	if key == 1 {
-		fmt.Println("请输入用户ID")
-		fmt.Scanf("%d\n", &userId)
-		fmt.Println("请输入用户密码")
-		fmt.Scanf("%s\n", &userPwd)
-		login(userId, userPwd)
-		// if err != nil {
-		// 	fmt.Println("登录失败")
-		// } else {
-		// 	fmt.Println("登录成功")
-		// }
-	} else if key == 2 {
-		fmt.Println("用户注册")
-	}
+	// if key == 1 {
+	// 	fmt.Println("请输入用户ID")
+	// 	fmt.Scanf("%d\n", &userId)
+	// 	fmt.Println("请输入用户密码")
+	// 	fmt.Scanf("%s\n", &userPwd)
+	// 	login(userId, userPwd)
+	// 	// if err != nil {
+	// 	// 	fmt.Println("登录失败")
+	// 	// } else {
+	// 	// 	fmt.Println("登录成功")
+	// 	// }
+	// } else if key == 2 {
+	// 	fmt.Println("用户注册")
+	// }
 }
