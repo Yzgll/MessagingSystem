@@ -53,7 +53,7 @@ func (this *UserProcess) Login(userId int, userPwd string) (err error) {
 	if n != 4 || err != nil {
 		fmt.Println("Conn Write err is ", err)
 	}
-	//fmt.Printf("The length of mesdata is %d and contex is%s \n", len(mesdata), string(mesdata))
+	fmt.Printf("The length of mesdata is %d and contex is%s \n", len(mesdata), string(mesdata))
 
 	//发送消息本身
 	_, err = conn.Write(mesdata)
