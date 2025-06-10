@@ -78,3 +78,53 @@ func (this *UserProcess) ServerProcessLogin(mes *message.Message) (err error) {
 
 	return
 }
+
+func (this *UserProcess) ServerProcessRegister(mes *message.Message) (err error) {
+	//反序列化获取user结构体
+	var registermes message.RegisterMes
+	err = json.Unmarshal([]byte(mes.MetaData), &registermes)
+	if err != nil {
+		fmt.Println("反序列化失败", err)
+		return
+	}
+	//注册成功返回响应消息
+	var resmes message.Message
+	resmes.Type = message.RegisterRspType
+
+	var registerrsp message.RegisterRsp
+	//调用userdao的注册方法
+	err = model.MyUserDao.Register(&registermes.User)
+
+	if err != nil {
+		if err == model.ERROR_USER_EXITS {
+			registerrsp.Code = 505
+			registerrsp.Error = model.ERROR_USER_EXITS.Error()
+		} else {
+			registerrsp.Code = 506
+			registerrsp.Error = "未知错误"
+		}
+	} else {
+		registerrsp.Code = 200
+	}
+
+	//将响应消息返回
+	data, err := json.Marshal(registerrsp)
+	if err != nil {
+		fmt.Println("序列化失败", err)
+		return
+	}
+	resmes.MetaData = string(data)
+
+	data, err = json.Marshal(resmes)
+	if err != nil {
+		fmt.Println("序列化失败", err)
+		return
+	}
+	//发送数据
+	tf := &utils.Transfer{
+		Conn: this.Conn,
+	}
+	err = tf.WritePkg(data)
+
+	return
+}

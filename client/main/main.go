@@ -8,6 +8,7 @@ import (
 // 全局变量一个账号一个密码
 var userId int
 var userPwd string
+var userName string
 
 func main() {
 
@@ -39,7 +40,14 @@ func main() {
 
 		case 2:
 			fmt.Println("\t\t\t注册用户")
-
+			fmt.Println("请输入用户ID")
+			fmt.Scanf("%d\n", &userId)
+			fmt.Println("请输入用户密码")
+			fmt.Scanf("%s\n", &userPwd)
+			fmt.Println("请输入用户昵称")
+			fmt.Scanf("%s\n", &userName)
+			up := &process.UserProcess{}
+			up.Register(userId, userPwd, userName)
 		case 3:
 			fmt.Println("\t\t\t退出系统")
 		default:

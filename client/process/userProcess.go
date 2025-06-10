@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
+	"os"
 )
 
 type UserProcess struct {
@@ -48,12 +49,12 @@ func (this *UserProcess) Login(userId int, userPwd string) (err error) {
 	dataLen = uint32(len(mesdata))
 	var buffer [4]byte
 	binary.BigEndian.PutUint32(buffer[:], dataLen)
-	fmt.Println(buffer)
+	//fmt.Println(buffer)
 	n, err := conn.Write(buffer[:])
 	if n != 4 || err != nil {
 		fmt.Println("Conn Write err is ", err)
 	}
-	fmt.Printf("The length of mesdata is %d and contex is%s \n", len(mesdata), string(mesdata))
+	//fmt.Printf("The length of mesdata is %d and contex is%s \n", len(mesdata), string(mesdata))
 
 	//发送消息本身
 	_, err = conn.Write(mesdata)
@@ -83,6 +84,63 @@ func (this *UserProcess) Login(userId int, userPwd string) (err error) {
 
 	} else {
 		fmt.Println(loginrsp.Error)
+	}
+	return
+}
+
+func (this *UserProcess) Register(userId int, userPwd string, userName string) (err error) {
+
+	//1.连接服务器
+	conn, err := net.Dial("tcp", "10.10.4.137:8080")
+	if err != nil {
+		fmt.Println("连接服务器失败", err)
+		return
+	}
+	defer conn.Close()
+	//2.准备发送消息
+	//定义registermes
+	var registermes message.RegisterMes
+	registermes.User.UserId = userId
+	registermes.User.UserPwd = userPwd
+	registermes.User.UserName = userName
+	//定义要发送的消息
+	var registerMes message.Message
+	registerMes.Type = message.RegisterMesType
+
+	data, err := json.Marshal(registermes)
+	if err != nil {
+		fmt.Println("序列化失败", err)
+		return
+	}
+	registerMes.MetaData = string(data)
+	//3.序列化
+	data, err = json.Marshal(registerMes)
+	if err != nil {
+		fmt.Println("序列化失败", err)
+		return
+	}
+	//发送消息
+	tf := &utils.Transfer{
+		Conn: conn,
+	}
+	err = tf.WritePkg(data)
+	if err != nil {
+		fmt.Println("注册信息发送失败", err)
+	}
+	//发送完消息还是处理服务器传回来的rsp
+	rsp, err := tf.ReadPkg()
+	if err != nil {
+		fmt.Println("读取服务器返回消息失败", err)
+		return
+	}
+	var registerrsp message.RegisterRsp
+	err = json.Unmarshal([]byte(rsp.MetaData), &registerrsp)
+	if registerrsp.Code == 200 {
+		fmt.Println("注册成功，请重新弄登录！")
+		os.Exit(0)
+	} else {
+		fmt.Println(registerrsp.Error)
+		os.Exit(0)
 	}
 	return
 }

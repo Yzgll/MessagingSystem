@@ -4,6 +4,7 @@ const (
 	LoginMesType    = "LoginMes"
 	LoginRspType    = "LoginRsp"
 	RegisterMesType = "RegisterMes"
+	RegisterRspType = "RegisterRsp"
 )
 
 type Message struct {
@@ -23,4 +24,9 @@ type LoginRsp struct {
 }
 
 type RegisterMes struct {
+	User User `json:"user"`
+}
+type RegisterRsp struct {
+	Code  int    `json:"code"`  //状态码505表示已经占用 200表示登录成功
+	Error string `json:"error"` //错误信息
 }

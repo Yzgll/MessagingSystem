@@ -1,6 +1,7 @@
 package model
 
 import (
+	"MessageSystem/common/message"
 	"encoding/json"
 	"fmt"
 
@@ -61,6 +62,33 @@ func (this *UserDao) Login(userId int, userPwd string) (user *User, err error) {
 	//没有错误成功拿到user信息，进行对比
 	if user.UserPwd != userPwd {
 		err = ERROR_USER_PWD
+		return
+	}
+	return
+}
+
+// 处理注册信息，负责将信息加入redis数据库
+func (this *UserDao) Register(user *message.User) (err error) {
+	conn := this.pool.Get()
+	defer conn.Close()
+	//从数据库里查询看看这个id是否存在
+	_, err = this.getUserById(conn, user.UserId)
+	if err == nil {
+		//错误为空说明数据库中找到了Id，表示已经注册过
+		err = ERROR_USER_EXITS
+		return
+	}
+
+	//把user信息入库
+	data, err := json.Marshal(user)
+	if err != nil {
+		fmt.Println("注册时序列化用户信息失败", err)
+		return
+	}
+	//入库
+	_, err = conn.Do("HSet", "users", user.UserId, string(data))
+	if err != nil {
+		fmt.Println("注册时添加用户信息到数据库失败", err)
 		return
 	}
 	return
