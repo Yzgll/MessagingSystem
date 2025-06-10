@@ -1,8 +1,10 @@
 package main
 
 import (
+	"MessageSystem/server/model"
 	"fmt"
 	"net"
+	"time"
 )
 
 // // 发送响应消息到客户端
@@ -131,7 +133,15 @@ func process(conn net.Conn) {
 	}
 
 }
+
+// 初始化UserDao
+func initUserDao() {
+	model.MyUserDao = model.NewUserDao(pool)
+}
 func main() {
+	//初始化连接池
+	initPool("localhost:6379", 16, 0, 300*time.Second)
+	initUserDao()
 	//监听本地端口
 	fmt.Println("新服务器结构在8080端口监听")
 	listen, err := net.Listen("tcp", "10.10.4.137:8080")

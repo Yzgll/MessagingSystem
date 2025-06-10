@@ -7,6 +7,11 @@ import (
 	"github.com/garyburd/redigo/redis"
 )
 
+// 服务器启动后就创建一个全局的实例用来和数据库交互
+var (
+	MyUserDao *UserDao
+)
+
 //操作redis数据库
 
 // 定义UserDao结构体，完成对结构体的各种操作
