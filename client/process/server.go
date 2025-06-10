@@ -2,6 +2,8 @@ package process
 
 import (
 	"MessageSystem/client/utils"
+	"MessageSystem/common/message"
+	"encoding/json"
 	"fmt"
 	"net"
 	"os"
@@ -22,7 +24,8 @@ func ShowMenu() {
 	fmt.Scanf("%d\n", &key)
 	switch key {
 	case 1:
-		fmt.Println("显示在线用户列表")
+		//fmt.Println("显示在线用户列表")
+		outputOnlineUsers()
 	case 2:
 		fmt.Println("发送消息")
 	case 3:
@@ -49,6 +52,17 @@ func serverProcessMes(conn net.Conn) {
 			return
 		}
 		//正确读取到消息
-		fmt.Printf("正确读取到消息%v\n", mes)
+		//fmt.Printf("正确读取到消息%v\n", mes)
+		//处理服务器发来的消息
+		switch mes.Type {
+		case message.NotifyUserStatusMesType:
+			//取出消息
+			//加入到客户端维护的map
+			var notifyUserStatusMes message.NotifyUserStatusMes
+			json.Unmarshal([]byte(mes.MetaData), &notifyUserStatusMes)
+			updataUserStatus(&notifyUserStatusMes)
+		default:
+			fmt.Println("服务器返回了未知消息类型")
+		}
 	}
 }

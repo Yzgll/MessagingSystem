@@ -1,10 +1,18 @@
 package message
 
 const (
-	LoginMesType    = "LoginMes"
-	LoginRspType    = "LoginRsp"
-	RegisterMesType = "RegisterMes"
-	RegisterRspType = "RegisterRsp"
+	LoginMesType            = "LoginMes"
+	LoginRspType            = "LoginRsp"
+	RegisterMesType         = "RegisterMes"
+	RegisterRspType         = "RegisterRsp"
+	NotifyUserStatusMesType = "NotifyUserStatusMes"
+)
+
+// 用户状态常量
+const (
+	UserOnline = iota
+	UserOffline
+	UserBusyStatus
 )
 
 type Message struct {
@@ -30,4 +38,9 @@ type RegisterMes struct {
 type RegisterRsp struct {
 	Code  int    `json:"code"`  //状态码505表示已经占用 200表示登录成功
 	Error string `json:"error"` //错误信息
+}
+
+type NotifyUserStatusMes struct {
+	UserId int `json:"userId"`
+	Status int `json:"status"`
 }
