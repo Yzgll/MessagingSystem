@@ -10,7 +10,8 @@ import (
 )
 
 type UserProcess struct {
-	Conn net.Conn
+	Conn   net.Conn
+	UserId int //表示是哪个用户的连接
 }
 
 // 实现处理登录函数
@@ -46,6 +47,13 @@ func (this *UserProcess) ServerProcessLogin(mes *message.Message) (err error) {
 
 	} else {
 		loginrsp.Code = 200
+		//登录成功，将该用户放入在线列表中
+		this.UserId = loginmes.UserId
+		userMgr.AddOnlineUser(this)
+		//将在在线用户列表的所有用户放入新增的切片返回
+		for id, _ := range userMgr.onlineUsers {
+			loginrsp.UsersId = append(loginrsp.UsersId, id)
+		}
 		fmt.Println(user.UserId, "登录成功")
 	}
 
