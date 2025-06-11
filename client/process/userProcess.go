@@ -75,6 +75,11 @@ func (this *UserProcess) Login(userId int, userPwd string) (err error) {
 	var loginrsp message.LoginRsp
 	err = json.Unmarshal([]byte(mes.MetaData), &loginrsp)
 	if loginrsp.Code == 200 {
+		//初始化
+		CurUser.Conn = conn
+		CurUser.User.UserId = userId
+		CurUser.User.UserStatus = message.UserOnline
+
 		fmt.Println("当前在线用户列表如下：")
 		for _, v := range loginrsp.UsersId {
 			if v == userId {

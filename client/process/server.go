@@ -21,13 +21,17 @@ func ShowMenu() {
 	fmt.Println("* 请选择(1-4):                       *")
 	fmt.Println("**************************************")
 	var key int
+	var connet string
+	smsprocess := &SmsProcess{}
 	fmt.Scanf("%d\n", &key)
 	switch key {
 	case 1:
 		//fmt.Println("显示在线用户列表")
 		outputOnlineUsers()
 	case 2:
-		fmt.Println("发送消息")
+		fmt.Println("请输入你要发送的消息！")
+		fmt.Scanf("%s\n", &connet)
+		smsprocess.SendGroupMes(connet)
 	case 3:
 		fmt.Println("信息列表")
 	case 4:
@@ -46,6 +50,8 @@ func serverProcessMes(conn net.Conn) {
 	}
 	for {
 		fmt.Println("客户端正在等待读取服务器推送的消息")
+		fmt.Println()
+		fmt.Println()
 		mes, err := tf.ReadPkg()
 		if err != nil {
 			fmt.Println("读取服务器推送消息失败错误是", err)
@@ -61,6 +67,8 @@ func serverProcessMes(conn net.Conn) {
 			var notifyUserStatusMes message.NotifyUserStatusMes
 			json.Unmarshal([]byte(mes.MetaData), &notifyUserStatusMes)
 			updataUserStatus(&notifyUserStatusMes)
+		case message.SmsMesType:
+			outputGroupMes(&mes)
 		default:
 			fmt.Println("服务器返回了未知消息类型")
 		}

@@ -1,12 +1,14 @@
 package process
 
 import (
+	"MessageSystem/client/model"
 	"MessageSystem/common/message"
 	"fmt"
 )
 
 // 客户端维护的map
 var onlineUsers map[int]*message.User = make(map[int]*message.User, 10)
+var CurUser model.CurUser //登录成功后对其初始化
 
 func updataUserStatus(notifyUserStatusMes *message.NotifyUserStatusMes) {
 	user, ok := onlineUsers[notifyUserStatusMes.UserId]
