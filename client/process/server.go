@@ -49,7 +49,7 @@ func serverProcessMes(conn net.Conn) {
 		Conn: conn,
 	}
 	for {
-		fmt.Println("客户端正在等待读取服务器推送的消息")
+		//fmt.Println("客户端正在等待读取服务器推送的消息")
 		fmt.Println()
 		fmt.Println()
 		mes, err := tf.ReadPkg()

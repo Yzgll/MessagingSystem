@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
-	"os"
 )
 
 type UserProcess struct {
@@ -80,7 +79,7 @@ func (this *UserProcess) Login(userId int, userPwd string) (err error) {
 		CurUser.User.UserId = userId
 		CurUser.User.UserStatus = message.UserOnline
 
-		fmt.Println("当前在线用户列表如下：")
+		// fmt.Println("当前在线用户列表如下：")
 		for _, v := range loginrsp.UsersId {
 			if v == userId {
 				continue
@@ -156,10 +155,12 @@ func (this *UserProcess) Register(userId int, userPwd string, userName string) (
 	err = json.Unmarshal([]byte(rsp.MetaData), &registerrsp)
 	if registerrsp.Code == 200 {
 		fmt.Println("注册成功，请重新弄登录！")
-		os.Exit(0)
+		//os.Exit(0)
+		return nil
 	} else {
 		fmt.Println(registerrsp.Error)
-		os.Exit(0)
+		//os.Exit(0)
+		return nil
 	}
 	return
 }

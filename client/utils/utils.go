@@ -40,7 +40,7 @@ func (this *Transfer) WritePkg(data []byte) (err error) {
 func (this *Transfer) ReadPkg() (mes message.Message, err error) {
 
 	//buffer := make([]byte, 8096)
-	fmt.Println("Waiting for data from client")
+	// fmt.Println("Waiting for data from client")
 
 	_, err = this.Conn.Read(this.Buffer[:4])
 	if err != nil {
